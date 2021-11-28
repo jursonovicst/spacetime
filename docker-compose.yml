@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+
+  transmission:
+    build: transmission
+    image: transmission
+    restart: unless-stopped
+    volumes:
+      - ./client:/etc/openvpn/client:ro
+      - config:/etc/transmission-daemon
+      - ./settings.json:/etc/transmission-daemon/settings.json
+      - downloaded:/var/lib/transmission-daemon/downloads
+    networks:
+      dmz:
+        ipv4_address: 192.168.20.13
+    sysctls:
+      - net.ipv4.ip_forward=1
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    #command: --config /etc/openvpn/client/wormhole.conf
+    #docker run -d --network dmz_net -v "$(pwd)"/client:/etc/openvpn/client --cap-add=NET_ADMIN --device=/dev/net/tun  test --config /etc/openvpn/client/wormhole.conf
+
+    #volumes:
+volumes:
+  config:
+  downloaded:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=192.168.20.10,rw,async
+      device: ":/mnt/storage/media/Torrent/_downloaded_"
+
+networks:
+  dmz:
+    external: true
