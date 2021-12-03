@@ -22,6 +22,6 @@ ENTRYPOINT [ "/usr/bin/supervisord" ]
 
 
 # healthcheck
-HEALTHCHECK --interval=120s --start-period=120s CMD curl -s ipinfo.io/ | jq ".country" |grep \"HU\"
+HEALTHCHECK --interval=120s --start-period=120s CMD curl -s ipinfo.io/ | jq ".country" |grep \"HU\" || pkill --signal SIGHUP -F /var/run/openvpn.pid
 #HEALTHCHECK --interval=120s --start-period=120s CMD curl -s ipinfo.io/ | jq ".country" |grep \"HU\" || kill 1
 
